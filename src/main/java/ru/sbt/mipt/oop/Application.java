@@ -1,8 +1,15 @@
 package ru.sbt.mipt.oop;
 
-import ru.sbt.mipt.oop.handlers.*;
+import ru.sbt.mipt.oop.handler.*;
+import ru.sbt.mipt.oop.model.SmartHome;
+import ru.sbt.mipt.oop.model.event.SensorEvent;
+import ru.sbt.mipt.oop.utils.SmartHomeJsonLoader;
+import ru.sbt.mipt.oop.utils.SmartHomeLoader;
+import ru.sbt.mipt.oop.utils.event.EventGenerator;
+import ru.sbt.mipt.oop.utils.event.EventHandlerManager;
+import ru.sbt.mipt.oop.utils.event.RandomEventGenerator;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class Application {
     private EventGenerator eventGenerator;
@@ -21,7 +28,7 @@ public class Application {
         new Application(
                 new RandomEventGenerator(),
                 new SmartHomeJsonLoader("smart-home-1.json"),
-                new EventHandlerManager(List.of(
+                new EventHandlerManager(Arrays.asList(
                         new LightOffHandler(),
                         new LightOnHandler(),
                         new DoorCloseHandler(),
