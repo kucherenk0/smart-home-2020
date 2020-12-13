@@ -1,11 +1,12 @@
-package ru.sbt.mipt.oop;
+package ru.sbt.mipt.oop.model;
+
+import ru.sbt.mipt.oop.Actionable;
+import ru.sbt.mipt.oop.action.Action;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static ru.sbt.mipt.oop.SensorEventType.*;
-
-public class SmartHome {
+public class SmartHome implements Actionable {
     private Collection<Room> rooms;
 
     public SmartHome() {
@@ -24,12 +25,11 @@ public class SmartHome {
         return rooms;
     }
 
-    public void handleEvent(SensorEvent event){
-        if (event.getType() == LIGHT_ON || event.getType() == LIGHT_OFF) {
-            // событие от источника света
-            for (Room room : rooms) {
-                room.handleEvent(event);
-            }
+    @Override
+    public void apply(Action action) {
+        action.act(this);
+        for (Room room : rooms) {
+            action.act(room);
         }
     }
 }
