@@ -1,10 +1,11 @@
-package ru.sbt.mipt.oop.handler;
+package ru.sbt.mipt.oop.handler.handler;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import ru.sbt.mipt.oop.action.Action;
+import ru.sbt.mipt.oop.handler.HallDoorCloseHandler;
 import ru.sbt.mipt.oop.model.SmartHome;
 import ru.sbt.mipt.oop.model.event.SensorEvent;
 import ru.sbt.mipt.oop.model.event.SensorEventType;
