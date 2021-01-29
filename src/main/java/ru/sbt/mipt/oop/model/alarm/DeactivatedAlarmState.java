@@ -2,7 +2,10 @@ package ru.sbt.mipt.oop.model.alarm;
 
 public class DeactivatedAlarmState implements AlarmState {
 
-    public DeactivatedAlarmState() {
+    private String code;
+
+    public DeactivatedAlarmState(String code) {
+        this.code = code;
         System.out.println("Alarm is deactivated");
     }
 
@@ -20,6 +23,6 @@ public class DeactivatedAlarmState implements AlarmState {
     @Override
     public AlarmState alert() {
         System.out.println("Alarm is deactivated");
-        return this;
+        return new AlertAlarmState(code);
     }
 }

@@ -5,7 +5,7 @@ public class Alarm {
     private String code;
 
     public Alarm() {
-        this.state = new DeactivatedAlarmState();
+        this.state = new DeactivatedAlarmState(code);
     }
 
     public void activate(String code) {

@@ -11,7 +11,7 @@ public class ActivatedAlarmState implements AlarmState {
     @Override
     public AlarmState deactivate(String code) {
         if (code.equals(this.code)) {
-            return new DeactivatedAlarmState();
+            return new DeactivatedAlarmState(code);
         } else {
             System.out.println("Incorrect code sent!!!");
             return this.alert();

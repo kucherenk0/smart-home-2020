@@ -17,7 +17,7 @@ public class AlertAlarmState implements AlarmState {
     @Override
     public AlarmState deactivate(String code) {
         if (code.equals(this.code)) {
-            return new DeactivatedAlarmState();
+            return new DeactivatedAlarmState(this.code);
         } else {
             System.out.println("Wrong passcode");
             return this.alert();
