@@ -9,21 +9,18 @@ import ru.sbt.mipt.oop.utils.event.EventHandlerManager;
 
 import java.util.Map;
 
-public class HandlerAdapter implements EventHandler {
+public class HandlerCCAdapter implements EventHandler {
 
-    private final EventHandler handler;
     private final Map<String, SensorEventType> eventTypeMap;
     private SmartHome smartHome;
     private EventHandlerManager eventHandlerManager;
 
 
-    public HandlerAdapter(SmartHome smartHome,
-                          EventHandlerManager eventHandlerManager,
-                          EventHandler handler,
-                          Map<String,
-                                  SensorEventType> eventTypeMap) {
+    public HandlerCCAdapter(SmartHome smartHome,
+                            EventHandlerManager eventHandlerManager,
+                            Map<String,
+                                    SensorEventType> eventTypeMap) {
         this.eventHandlerManager = eventHandlerManager;
-        this.handler = handler;
         this.eventTypeMap = eventTypeMap;
         this.smartHome = smartHome;
     }

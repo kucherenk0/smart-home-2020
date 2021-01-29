@@ -1,12 +1,16 @@
 package ru.sbt.mipt.oop;
 
+import com.coolcompany.smarthome.events.SensorEventsManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.sbt.mipt.oop.adapter.HandlerCCAdapter;
 import ru.sbt.mipt.oop.handler.*;
 import ru.sbt.mipt.oop.model.SmartHome;
 import ru.sbt.mipt.oop.model.alarm.Alarm;
 import ru.sbt.mipt.oop.model.event.SensorEventType;
+import ru.sbt.mipt.oop.utils.DummySmsMessageSender;
+import ru.sbt.mipt.oop.utils.MessageSender;
 import ru.sbt.mipt.oop.utils.SmartHomeJsonLoader;
 import ru.sbt.mipt.oop.utils.SmartHomeLoader;
 import ru.sbt.mipt.oop.utils.event.EventGenerator;
@@ -27,10 +31,16 @@ public class SmartHomeConfiguration {
 
 
     @Bean
-    EventListener eventListener() {
-        return new EventListener(eventGenerator(), smartHomeLoader(), eventHandlerManager());
+    SensorEventsManager sensorEventsManager(HandlerCCAdapter handlerCCAdapter) {
+        SensorEventsManager sensorEventsManager = new SensorEventsManager();
+        sensorEventsManager.registerEventHandler(handlerCCAdapter);
+        return sensorEventsManager;
     }
 
+    @Bean
+    HandlerCCAdapter handlerCCAdapter(EventHandlerManager eventHandlerManager) {
+        return new HandlerCCAdapter(smartHome(), eventHandlerManager, eventTypeMap());
+    }
 
     @Bean
     EventGenerator eventGenerator() {
@@ -41,7 +51,6 @@ public class SmartHomeConfiguration {
     SmartHomeLoader smartHomeLoader() {
         return new SmartHomeJsonLoader(fileName);
     }
-
 
     @Bean
     EventHandlerManager eventHandlerManager() {
@@ -61,12 +70,19 @@ public class SmartHomeConfiguration {
     @Bean
     List<EventHandler> eventHandlers() {
         return Arrays.asList(
-                new LightOffHandler(),
-                new LightOnHandler(),
-                new DoorCloseHandler(),
-                new DoorOpenHandler(),
-                new HallDoorCloseHandler()
+                new SecurityHandlerDecorator(new LightOffHandler(), dummyMessageSender(), alarm()),
+                new SecurityHandlerDecorator(new LightOnHandler(), dummyMessageSender(), alarm()),
+                new SecurityHandlerDecorator(new DoorCloseHandler(), dummyMessageSender(), alarm()),
+                new SecurityHandlerDecorator(new DoorOpenHandler(), dummyMessageSender(), alarm()),
+                new SecurityHandlerDecorator(new AlarmActivateHandler(alarm()), dummyMessageSender(), alarm()),
+                new SecurityHandlerDecorator(new AlarmDeactivateHandler(alarm()), dummyMessageSender(), alarm()),
+                new SecurityHandlerDecorator(new HallDoorCloseHandler(), dummyMessageSender(), alarm())
         );
+    }
+
+    @Bean
+    MessageSender dummyMessageSender() {
+        return new DummySmsMessageSender();
     }
 
     @Bean
@@ -76,6 +92,8 @@ public class SmartHomeConfiguration {
         map.put("LightIsOff", SensorEventType.LIGHT_OFF);
         map.put("DoorIsOpen", SensorEventType.DOOR_OPEN);
         map.put("DoorIsClosed", SensorEventType.DOOR_CLOSED);
+        map.put("DoorIsLocked", SensorEventType.DOOR_CLOSED);
+        map.put("DoorIsUnlocked", SensorEventType.DOOR_OPEN);
         return map;
     }
 
