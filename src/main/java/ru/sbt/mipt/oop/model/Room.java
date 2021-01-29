@@ -32,10 +32,10 @@ public class Room implements Actionable {
     public void apply(Action action) {
         action.act(this);
         for (Light light : lights) {
-            action.act(light);
+           light.apply(action);
         }
         for (Door door : doors) {
-            action.act(door);
+            door.apply(action);
         }
     }
 }

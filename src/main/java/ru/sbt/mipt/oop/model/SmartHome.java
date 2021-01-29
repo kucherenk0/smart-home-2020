@@ -29,7 +29,7 @@ public class SmartHome implements Actionable {
     public void apply(Action action) {
         action.act(this);
         for (Room room : rooms) {
-            action.act(room);
+            room.apply(action);
         }
     }
 }

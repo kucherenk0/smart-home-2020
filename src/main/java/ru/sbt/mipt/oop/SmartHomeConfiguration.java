@@ -4,11 +4,16 @@ import com.coolcompany.smarthome.events.SensorEventsManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import remote.RemoteControl;
+import remote.RemoteControlRegistry;
 import ru.sbt.mipt.oop.adapter.HandlerCCAdapter;
 import ru.sbt.mipt.oop.handler.*;
 import ru.sbt.mipt.oop.model.SmartHome;
 import ru.sbt.mipt.oop.model.alarm.Alarm;
 import ru.sbt.mipt.oop.model.event.SensorEventType;
+import ru.sbt.mipt.oop.rс.Command;
+import ru.sbt.mipt.oop.rс.RemoteControlImpl;
+import ru.sbt.mipt.oop.rс.commands.*;
 import ru.sbt.mipt.oop.utils.DummySmsMessageSender;
 import ru.sbt.mipt.oop.utils.MessageSender;
 import ru.sbt.mipt.oop.utils.SmartHomeJsonLoader;
@@ -28,6 +33,9 @@ public class SmartHomeConfiguration {
 
     @Value("smart-home-1.json")
     private String fileName;
+
+    @Value("12345678")
+    private String alarmCode;
 
 
     @Bean
@@ -95,6 +103,37 @@ public class SmartHomeConfiguration {
         map.put("DoorIsLocked", SensorEventType.DOOR_CLOSED);
         map.put("DoorIsUnlocked", SensorEventType.DOOR_OPEN);
         return map;
+    }
+
+    @Bean
+    String remoteControllerId() {
+        return "123";
+    }
+
+    @Bean
+    RemoteControlRegistry remoteControlRegistry() {
+        return new RemoteControlRegistry();
+    }
+
+    Map<String, Command> remoteCommands() {
+        Map<String, Command> map = new HashMap<>();
+        map.put("A", new AlarmActivateCommand(alarm(), alarmCode));
+        map.put("B", new AlertAlarmCommand(alarm()));
+        map.put("C", new CloseHallDoorCommand(smartHome()));
+        map.put("D", new TurnOffAllLightsCommand(smartHome()));
+        map.put("1", new TurnOnAllLightsCommand(smartHome()));
+        map.put("2", new TurnOnHallLightCommand(smartHome()));
+        return map;
+    }
+
+    @Bean
+    RemoteControl remoteControl() {
+        RemoteControlImpl remoteController = new RemoteControlImpl(remoteCommands());
+        remoteControlRegistry().registerRemoteControl(
+                remoteController,
+                remoteControllerId()
+        );
+        return remoteController;
     }
 
 }

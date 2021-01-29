@@ -23,6 +23,7 @@ public class HallDoorCloseAction implements Action {
                 if (room.getName().equals("hall")) {
                     for (Door door : room.getDoors()) {
                         if (door.getId().equals(event.getObjectId())) {
+                            door.setOpen(false);
                             turnOffAllLights(smartHome);
                         }
                     }
